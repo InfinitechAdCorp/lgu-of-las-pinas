@@ -14,9 +14,7 @@ export default function CookieConsent() {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check if user has already made a choice
     const cookieConsent = localStorage.getItem("cookie-consent")
-
     if (!cookieConsent) {
       setIsVisible(true)
     }
@@ -26,11 +24,9 @@ export default function CookieConsent() {
   const handleAccept = () => {
     localStorage.setItem("cookie-consent", "accepted")
     localStorage.setItem("cookie-consent-date", new Date().toISOString())
-
     window.gtag?.("consent", "update", {
       analytics_storage: "granted",
     })
-
     setIsVisible(false)
   }
 
@@ -43,22 +39,26 @@ export default function CookieConsent() {
   if (!isVisible || isLoading) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-gradient-to-r from-primary-600 to-accent-600 rounded-lg shadow-lg p-4 md:p-6 text-white">
+    <div className="fixed bottom-0 left-0 right-0 z-40 p-4 md:p-6 pointer-events-none">
+      <div className="max-w-2xl mx-auto pointer-events-auto">
+        <div className="bg-gradient-to-r from-lp-green-700 to-lp-green-600 rounded-lg shadow-2xl p-4 md:p-6 text-white border border-lp-gold-500/30">
           <div className="flex items-start gap-4">
-            {/* Cookie Icon */}
-            <Cookie className="w-6 h-6 flex-shrink-0 mt-1" />
+            <div className="bg-lp-gold-500/20 p-2 rounded-full">
+              <Cookie className="w-6 h-6 flex-shrink-0 text-lp-gold-400" />
+            </div>
 
             <div className="flex-1">
-              <h3 className="font-bold text-lg mb-2">Cookie Preferences</h3>
+              <h3 className="font-bold text-lg mb-2 text-white">Cookie Preferences</h3>
               <p className="text-sm md:text-base text-white/90 mb-4">
                 We use cookies to improve your experience on our website. These help us understand how you use the site
-                and enable performance analytics and personalized content. By accepting, you help us serve you better.
+                and enable performance analytics. By accepting, you help us serve you better.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-                <a href="/cookies" className="text-white underline text-sm hover:text-white/80 transition-colors">
+                <a
+                  href="/cookies"
+                  className="text-lp-gold-300 underline text-sm hover:text-lp-gold-200 transition-colors"
+                >
                   Learn more
                 </a>
 
@@ -71,7 +71,7 @@ export default function CookieConsent() {
                   </button>
                   <button
                     onClick={handleAccept}
-                    className="px-4 py-2 rounded-lg bg-white text-primary-600 font-medium hover:bg-white/90 transition-colors text-sm"
+                    className="px-4 py-2 rounded-lg bg-lp-gold-500 text-lp-green-900 font-medium hover:bg-lp-gold-400 transition-colors text-sm"
                   >
                     Accept Cookies
                   </button>
@@ -79,7 +79,6 @@ export default function CookieConsent() {
               </div>
             </div>
 
-            {/* Close Button */}
             <button
               onClick={handleReject}
               className="flex-shrink-0 text-white/70 hover:text-white transition-colors"

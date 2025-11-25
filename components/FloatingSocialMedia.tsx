@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
-import { Facebook, MessageCircle, Send, Mail, Phone, Globe } from 'lucide-react'
+import { Facebook, Instagram, Mail, Phone, Globe } from 'lucide-react'
+import { XIcon } from '@/components/icons'
 
 export default function FloatingSocialMedia() {
   const pathname = usePathname()
@@ -17,32 +18,32 @@ export default function FloatingSocialMedia() {
     {
       name: 'Facebook',
       icon: Facebook,
-      url: 'https://www.facebook.com/Calapan2031/',
+      url: 'https://www.facebook.com/cityoflaspinasofficial/',
       color: 'bg-blue-600 hover:bg-blue-700'
     },
     {
-      name: 'WhatsApp',
-      icon: MessageCircle,
-      url: 'https://wa.me/639123456789', // Replace with actual WhatsApp number
-      color: 'bg-green-500 hover:bg-green-600'
+      name: 'Instagram',
+      icon: Instagram,
+      url: 'https://www.instagram.com/laspinascity/', // Replace with actual Instagram
+      color: 'bg-gradient-to-br from-purple-600 via-pink-600 to-orange-500 hover:from-purple-700 hover:via-pink-700 hover:to-orange-600'
     },
     {
-      name: 'Telegram',
-      icon: Send,
-      url: 'https://t.me/calapancity', // Replace with actual Telegram
-      color: 'bg-sky-500 hover:bg-sky-600'
+      name: 'Twitter',
+      icon: XIcon,
+      url: 'https://twitter.com/laspinascity', // Replace with actual Twitter/X
+      color: 'bg-black hover:bg-gray-900'
     },
     {
       name: 'Email',
       icon: Mail,
-      url: 'mailto:info@calapancity.gov.ph',
+      url: 'mailto:laspinascitygov@yahoo.com',
       color: 'bg-red-500 hover:bg-red-600'
     },
     {
       name: 'Phone',
       icon: Phone,
-      url: 'tel:+639123456789', // Replace with actual phone number
-      color: 'bg-blue-500 hover:bg-blue-600'
+      url: 'tel:+6328874-5050', // Las Piñas City Hall number
+      color: 'bg-lp-green-600 hover:bg-lp-green-700'
     }
   ]
 
@@ -72,7 +73,7 @@ export default function FloatingSocialMedia() {
         {/* Globe Button */}
         <button
           onClick={() => setIsExpanded(!isExpanded)}
-          className="bg-gradient-to-r from-orange-600 to-orange-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl"
+          className="bg-gradient-to-r from-lp-green-600 to-lp-green-500 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:shadow-xl"
           aria-label="Social Media Menu"
         >
           <Globe className={`w-5 h-5 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
@@ -112,7 +113,7 @@ export default function FloatingSocialMedia() {
         }
         
         .animate-in {
-          animation: slide-in-from-left 0.3s ease-out forwards;
+          animation: slide-in-from-right 0.3s ease-out forwards;
         }
       `}</style>
     </>

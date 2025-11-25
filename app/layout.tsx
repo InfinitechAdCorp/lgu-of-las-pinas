@@ -12,73 +12,73 @@ const geist = Geist({ subsets: ["latin"] })
 const geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://lgu-of-calapan.vercel.app/"),
-  
+  metadataBase: new URL("https://laspinas.gov.ph/"),
+
   title: {
-    default: "Calapan City System | Smart City Services & Community Portal",
-    template: "%s | Calapan City System"
+    default: "City of Las Piñas | Official Government Portal",
+    template: "%s | City of Las Piñas",
   },
-  
-  description: "Official Calapan City digital platform providing seamless access to government services, community updates, emergency alerts, and local resources. Your complete gateway to smart city living in Oriental Mindoro.",
-  
+
+  description:
+    "Official digital platform of the City of Las Piñas, Philippines. Access government services, community updates, news, and local resources. Your gateway to smart city living in Metro Manila.",
+
   keywords: [
-    "Calapan City",
-    "Oriental Mindoro",
+    "Las Piñas City",
+    "Las Piñas",
+    "Metro Manila",
     "city services",
     "government portal",
     "smart city",
     "community updates",
     "local government",
     "Philippine city services",
-    "Calapan government",
+    "Las Piñas government",
     "city hall services",
-    "emergency alerts",
-    "community portal",
-    "digital government",
-    "e-services Philippines"
+    "Bamboo Organ",
+    "Salt Beds",
+    "NCR",
   ],
-  
-  authors: [{ name: "Calapan City Government" }],
-  creator: "Calapan City Government",
-  publisher: "Calapan City Government",
+
+  authors: [{ name: "City Government of Las Piñas" }],
+  creator: "City Government of Las Piñas",
+  publisher: "City Government of Las Piñas",
   generator: "Next.js",
-  applicationName: "Calapan City System",
+  applicationName: "Las Piñas City Portal",
   referrer: "origin-when-cross-origin",
-  manifest: "/manifest.json",
-  
-  // Open Graph metadata
+  manifest: "/manifest.json", // PWA manifest
+
   openGraph: {
     type: "website",
     locale: "en_PH",
-    url: "https://lgu-of-calapan.vercel.app/",
-    title: "Calapan City System | Smart City Services & Community Portal",
-    description: "Official Calapan City digital platform providing seamless access to government services, community updates, emergency alerts, and local resources.",
-    siteName: "Calapan City System",
+    url: "https://laspinas.gov.ph/",
+    title: "City of Las Piñas | Official Government Portal",
+    description:
+      "Official digital platform of the City of Las Piñas providing seamless access to government services, community updates, and local resources.",
+    siteName: "Las Piñas City Portal",
     images: [
       {
-        url: "https://lgu-of-calapan.vercel.app/og-image.png",
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Calapan City System - Smart City Services",
+        alt: "City of Las Piñas - Official Government Portal",
       },
     ],
     countryName: "Philippines",
   },
 
-  // Twitter Card metadata
   twitter: {
     card: "summary_large_image",
-    title: "Calapan City System | Smart City Services & Community Portal",
-    description: "Official Calapan City digital platform providing seamless access to government services, community updates, and local resources.",
-    images: ["https://lgu-of-calapan.vercel.app/twitter-image.png"],
-    creator: "@CalapanCity",
+    title: "City of Las Piñas | Official Government Portal",
+    description:
+      "Official digital platform of the City of Las Piñas providing seamless access to government services and community updates.",
+    images: ["/twitter-image.png"],
   },
 
-  // Apple Web App
+  // Apple Web App - PWA
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Calapan City",
+    title: "Las Piñas City",
     startupImage: [
       {
         url: "/apple-splash-2048-2732.png",
@@ -87,7 +87,6 @@ export const metadata: Metadata = {
     ]
   },
 
-  // Icons
   icons: {
     icon: [
       {
@@ -127,30 +126,30 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  
+
   formatDetection: {
     email: false,
     address: true,
     telephone: true,
   },
-  
+
   verification: {
     google: "your-google-verification-code",
     yandex: "your-yandex-verification-code",
     yahoo: "your-yahoo-verification-code",
   },
-  
+
   alternates: {
-    canonical: "https://lgu-of-calapan.vercel.app/",
+    canonical: "https://laspinas.gov.ph/",
     languages: {
-      "en-PH": "https://lgu-of-calapan.vercel.app/",
-      "fil-PH": "https://lgu-of-calapan.vercel.app//fil",
+      "en-PH": "https://laspinas.gov.ph/",
+      "fil-PH": "https://laspinas.gov.ph/fil",
     },
   },
-  
+
   category: "government",
-  
-  // Additional metadata
+
+  // Additional PWA metadata
   other: {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
@@ -160,14 +159,14 @@ export const metadata: Metadata = {
 
 export const viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ea580c" },
-    { media: "(prefers-color-scheme: dark)", color: "#c2410c" },
+    { media: "(prefers-color-scheme: light)", color: "#2d5a27" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a3d17" },
   ],
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  viewportFit: "cover",
+  viewportFit: "cover", // PWA viewport fit
 }
 
 export default function RootLayout({
@@ -179,31 +178,38 @@ export default function RootLayout({
   const governmentSchema = {
     "@context": "https://schema.org",
     "@type": "GovernmentOrganization",
-    "@id": "hhttps://lgu-of-calapan.vercel.app/#organization",
-    "name": "Calapan City Government",
-    "url": "hhttps://lgu-of-calapan.vercel.app/",
-    "logo": "https://lgu-of-calapan.vercel.app/icon512_rounded.png",
-    "description": "Official digital platform of Calapan City Government providing seamless access to city services and community updates",
-    "address": {
+    "@id": "https://laspinas.gov.ph/#organization",
+    name: "City Government of Las Piñas",
+    url: "https://laspinas.gov.ph/",
+    logo: "https://laspinas.gov.ph/icon512_rounded.png",
+    description:
+      "Official digital platform of the City Government of Las Piñas providing seamless access to city services and community updates",
+    address: {
       "@type": "PostalAddress",
-      "streetAddress": "Calapan City Hall",
-      "addressLocality": "Calapan City",
-      "addressRegion": "Oriental Mindoro",
-      "postalCode": "5200",
-      "addressCountry": "PH"
+      streetAddress: "Pamplona Tres",
+      addressLocality: "Las Piñas City",
+      addressRegion: "Metro Manila",
+      postalCode: "1740",
+      addressCountry: "PH",
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": "13.4119",
-      "longitude": "121.1803"
+      latitude: "14.4445",
+      longitude: "120.9930",
     },
-    "areaServed": {
+    areaServed: {
       "@type": "City",
-      "name": "Calapan City"
+      name: "Las Piñas City",
     },
-    "sameAs": [
-      "https://www.facebook.com/CalapanCity",
-      "https://twitter.com/CalapanCity"
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: "+63-2-8874-5050",
+      contactType: "customer service",
+      email: "info@laspinas.gov.ph",
+    },
+    sameAs: [
+      "https://www.facebook.com/LasPinasCity",
+      "https://twitter.com/LasPinasCity"
     ]
   }
 
@@ -211,41 +217,41 @@ export default function RootLayout({
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": "hhttps://lgu-of-calapan.vercel.app/#localbusiness",
-    "name": "Calapan City Government",
-    "image": "https://lgu-of-calapan.vercel.app/og-image.png",
-    "address": {
+    "@id": "https://laspinas.gov.ph/#localbusiness",
+    name: "City Government of Las Piñas",
+    image: "https://laspinas.gov.ph/og-image.png",
+    address: {
       "@type": "PostalAddress",
-      "streetAddress": "Calapan City Hall",
-      "addressLocality": "Calapan City",
-      "addressRegion": "Oriental Mindoro",
-      "postalCode": "5200",
-      "addressCountry": "Philippines"
+      streetAddress: "Pamplona Tres",
+      addressLocality: "Las Piñas City",
+      addressRegion: "Metro Manila",
+      postalCode: "1740",
+      addressCountry: "Philippines"
     },
-    "geo": {
+    geo: {
       "@type": "GeoCoordinates",
-      "latitude": "13.4119",
-      "longitude": "121.1803"
+      latitude: "14.4445",
+      longitude: "120.9930"
     },
-    "url": "https://lgu-of-calapan.vercel.app/"
+    url: "https://laspinas.gov.ph/"
   }
 
   // WebSite Schema
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": "https://lgu-of-calapan.vercel.app/#website",
-    "url": "https://lgu-of-calapan.vercel.app/",
-    "name": "Calapan City System",
-    "description": "Smart City Services & Community Portal",
-    "publisher": {
-      "@id": "https://lgu-of-calapan.vercel.app/#organization"
+    "@id": "https://laspinas.gov.ph/#website",
+    url: "https://laspinas.gov.ph/",
+    name: "Las Piñas City Portal",
+    description: "Official Government Portal",
+    publisher: {
+      "@id": "https://laspinas.gov.ph/#organization"
     },
-    "potentialAction": {
+    potentialAction: {
       "@type": "SearchAction",
-      "target": {
+      target: {
         "@type": "EntryPoint",
-        "urlTemplate": "https://lgu-of-calapan.vercel.app/search?q={search_term_string}"
+        urlTemplate: "https://laspinas.gov.ph/search?q={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }
@@ -273,16 +279,16 @@ export default function RootLayout({
         />
         
         {/* Open Graph Image Tags */}
-        <meta property="og:image" content="https://lgu-of-calapan.vercel.app/g-image.png" />
-        <meta property="og:image:secure_url" content="https://lgu-of-calapan.vercel.app/og-image.png" />
+        <meta property="og:image" content="https://laspinas.gov.ph/og-image.png" />
+        <meta property="og:image:secure_url" content="https://laspinas.gov.ph/og-image.png" />
         <meta property="og:image:type" content="image/png" />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
-        <meta property="og:image:alt" content="Calapan City System - Smart City Services" />
+        <meta property="og:image:alt" content="City of Las Piñas - Official Government Portal" />
         
         {/* Twitter Card Image */}
-        <meta name="twitter:image" content="https://lgu-of-calapan.vercel.app/twitter-image.png" />
-        <meta name="twitter:image:alt" content="Calapan City System" />
+        <meta name="twitter:image" content="https://laspinas.gov.ph/twitter-image.png" />
+        <meta name="twitter:image:alt" content="Las Piñas City Portal" />
         
         {/* Preconnect to external domains */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -290,10 +296,10 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         
         {/* Geographic meta tags */}
-        <meta name="geo.region" content="PH-MDR" />
-        <meta name="geo.placename" content="Calapan City" />
-        <meta name="geo.position" content="13.4119;121.1803" />
-        <meta name="ICBM" content="13.4119, 121.1803" />
+        <meta name="geo.region" content="PH-NCR" />
+        <meta name="geo.placename" content="Las Piñas City" />
+        <meta name="geo.position" content="14.4445;120.9930" />
+        <meta name="ICBM" content="14.4445, 120.9930" />
         
         {/* Additional meta tags */}
         <meta name="format-detection" content="telephone=yes" />
@@ -306,24 +312,26 @@ export default function RootLayout({
         <meta name="MobileOptimized" content="320" />
         
         {/* Business-specific meta */}
-        <meta property="place:location:latitude" content="13.4119" />
-        <meta property="place:location:longitude" content="121.1803" />
+        <meta property="place:location:latitude" content="14.4445" />
+        <meta property="place:location:longitude" content="120.9930" />
         
         {/* Canonical URL */}
-        <link rel="canonical" href="hhttps://lgu-of-calapan.vercel.app/" />
+        <link rel="canonical" href="https://laspinas.gov.ph/" />
         
         {/* Alternative languages */}
-        <link rel="alternate" hrefLang="en-ph" href="hhttps://lgu-of-calapan.vercel.app/" />
-        <link rel="alternate" hrefLang="fil-ph" href="hhttps://lgu-of-calapan.vercel.app/fil" />
-        <link rel="alternate" hrefLang="x-default" href="https://lgu-of-calapan.vercel.app" />
+        <link rel="alternate" hrefLang="en-ph" href="https://laspinas.gov.ph/" />
+        <link rel="alternate" hrefLang="fil-ph" href="https://laspinas.gov.ph/fil" />
+        <link rel="alternate" hrefLang="x-default" href="https://laspinas.gov.ph/" />
       </head>
-      <body className={`${geist.className} antialiased bg-gradient-to-br from-emerald-50 via-orange-50 to-emerald-50`}>
+      <body className={`${geist.className} ${geistMono.className} font-sans antialiased overflow-x-hidden`}>
         <ServiceWorkerProvider />
-        {children}
-        <Toaster />
-        <CookieConsent />
+        <div className="min-h-screen">
+          {children}
+        </div>
         <FloatingSocialMedia />
         <Chatbot />
+        <CookieConsent />
+        <Toaster />
       </body>
     </html>
   )

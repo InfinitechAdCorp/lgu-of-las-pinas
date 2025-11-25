@@ -51,7 +51,7 @@ export default function AdminHeader() {
               <Shield className="text-white" size={20} />
             </div>
             <div>
-              <h1 className="font-bold text-sm">Calapan City</h1>
+              <h1 className="font-bold text-sm">Las Piñas City</h1>
               <p className="text-xs text-gray-500">Admin Panel</p>
             </div>
           </div>

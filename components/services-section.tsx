@@ -1,77 +1,27 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search } from "lucide-react"
+import { Search, ArrowRight } from "lucide-react"
 import { useState } from "react"
 import Link from "next/link"
 
 const services = [
-  {
-    id: 1,
-    icon: "📋",
-    name: "Business Permit",
-    description: "Apply for business permits online"
-  },
-  {
-    id: 2,
-    icon: "🏗️",
-    name: "Building Permit",
-    description: "Construction and renovation permits"
-  },
-  {
-    id: 3,
-    icon: "📄",
-    name: "Cedula",
-    description: "Community tax certificate"
-  },
-  {
-    id: 4,
-    icon: "💍",
-    name: "Marriage License",
-    description: "Marriage certificate application"
-  },
-  {
-    id: 5,
-    icon: "🏥",
-    name: "Health Certificate",
-    description: "Medical clearance documents"
-  },
-  {
-    id: 6,
-    icon: "💉",
-    name: "Vaccination Records",
-    description: "View your vaccination history"
-  },
-  {
-    id: 7,
-    icon: "⚕️",
-    name: "Medical Assistance",
-    description: "Request medical support services"
-  },
-  {
-    id: 8,
-    icon: "👮",
-    name: "Police Clearance",
-    description: "Police clearance certificate"
-  },
-  {
-    id: 9,
-    icon: "🚒",
-    name: "Fire Safety",
-    description: "Fire safety inspections"
-  },
-  {
-    id: 10,
-    icon: "📝",
-    name: "Barangay Clearance",
-    description: "Barangay clearance certificate"
-  },
+  { id: 1, icon: "📋", name: "Business Permit", description: "Apply for and renew business permits online" },
+  { id: 2, icon: "🏗️", name: "Building Permit", description: "Construction and renovation permits" },
+  { id: 3, icon: "📄", name: "Cedula", description: "Community tax certificate" },
+  { id: 4, icon: "💍", name: "Marriage License", description: "Marriage certificate application" },
+  { id: 5, icon: "🏥", name: "Health Certificate", description: "Medical clearance documents" },
+  { id: 6, icon: "💉", name: "Vaccination Records", description: "View your vaccination history" },
+  { id: 7, icon: "⚕️", name: "Medical Assistance", description: "Request medical support services" },
+  { id: 8, icon: "👮", name: "Police Clearance", description: "Police clearance certificate" },
+  { id: 9, icon: "🚒", name: "Fire Safety", description: "Fire safety inspections" },
+  { id: 10, icon: "📝", name: "Barangay Clearance", description: "Barangay clearance certificate" },
 ]
 
 const stats = [
   { label: "Active Services", value: "50+", icon: "✓" },
-  { label: "Citizens Served", value: "200K+", icon: "👥" },
-  { label: "Requests Processed", value: "12K+", icon: "📊" },
+  { label: "Citizens Served", value: "600K+", icon: "👥" },
+  { label: "Requests Processed", value: "25K+", icon: "📊" },
 ]
 
 export default function ServicesSection() {
@@ -86,39 +36,35 @@ export default function ServicesSection() {
   return (
     <>
       {/* Hero */}
-      <div className="bg-gradient-to-br from-primary-600 to-primary-800 text-white py-20 px-4">
+      <div className="bg-lp-green-700 text-white py-20 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-4xl mx-auto text-center"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            All Government Services
-          </h1>
-          <p className="text-xl text-primary-100">
-            Access comprehensive government services designed to serve you better
-          </p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Government Services</h1>
+          <p className="text-xl text-lp-green-100">Access comprehensive city services designed to serve you better</p>
         </motion.div>
       </div>
 
       {/* Search Bar */}
-      <div className="max-w-6xl mx-auto px-4 -mt-8">
-        <div className="bg-white rounded-lg shadow-lg p-2">
+      <div className="max-w-6xl mx-auto px-4 -mt-8 relative z-10">
+        <div className="bg-white rounded-xl shadow-xl p-2 border border-lp-green-100">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-lp-green-400" />
             <input
               type="text"
               placeholder="Search services..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-accent-400"
+              className="w-full pl-12 pr-4 py-4 rounded-lg text-lp-green-900 placeholder-lp-green-400 focus:outline-none focus:ring-2 focus:ring-lp-green-500"
             />
           </div>
         </div>
       </div>
 
       {/* Services Grid */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-6xl mx-auto px-4 py-16">
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredServices.map((service, i) => (
             <motion.div
@@ -126,17 +72,21 @@ export default function ServicesSection() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-white rounded-lg shadow-md p-6 border border-gray-200"
+              whileHover={{ y: -4 }}
+              className="bg-white rounded-xl shadow-md p-6 border border-lp-green-100 hover:border-lp-green-300 hover:shadow-lg transition-all cursor-pointer group"
             >
               <div className="text-4xl mb-4">{service.icon}</div>
-              <h3 className="text-xl font-semibold mb-2 text-foreground">
+              <h3 className="text-xl font-semibold mb-2 text-lp-green-800 group-hover:text-lp-green-600 transition-colors">
                 {service.name}
               </h3>
-              <p className="text-muted-foreground mb-4">{service.description}</p>
+              <p className="text-lp-green-600 mb-4">{service.description}</p>
+              <span className="inline-flex items-center text-sm font-medium text-lp-gold-600 group-hover:text-lp-gold-500">
+                Learn more <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+              </span>
             </motion.div>
           ))}
           {filteredServices.length === 0 && (
-            <div className="col-span-full text-center py-12 text-muted-foreground">
+            <div className="col-span-full text-center py-12 text-lp-green-500">
               No services found matching your search
             </div>
           )}
@@ -144,7 +94,7 @@ export default function ServicesSection() {
       </div>
 
       {/* Stats Section */}
-      <div className="bg-gray-50 py-16 px-4">
+      <div className="bg-lp-green-50 py-16 px-4">
         <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
           {stats.map((stat, i) => (
             <motion.div
@@ -153,32 +103,30 @@ export default function ServicesSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
-              className="text-center"
+              className="text-center p-8 bg-white rounded-2xl shadow-md border border-lp-green-100"
             >
-              <div className="text-4xl mb-2">{stat.icon}</div>
-              <div className="text-3xl font-bold text-primary-600 mb-1">
-                {stat.value}
-              </div>
-              <div className="text-muted-foreground">{stat.label}</div>
+              <div className="text-4xl mb-3">{stat.icon}</div>
+              <div className="text-4xl font-bold text-lp-green-700 mb-2">{stat.value}</div>
+              <div className="text-lp-green-600 font-medium">{stat.label}</div>
             </motion.div>
           ))}
         </div>
       </div>
 
       {/* CTA */}
-      <div className="bg-gradient-to-r from-accent-500 to-accent-600 text-white py-16 px-4">
+      <div className="bg-lp-gold-500 text-lp-green-900 py-16 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-4">Need Help?</h2>
-          <p className="text-xl mb-8 text-accent-100">
-            Contact our support team for any questions about our services
+          <h2 className="text-3xl font-bold mb-4">Need Assistance?</h2>
+          <p className="text-xl mb-8 text-lp-green-800">
+            Our team is ready to help you with any questions about our services
           </p>
-          <Link href="/support">
+          <Link href="/contact">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className="bg-white text-accent-600 px-8 py-3 rounded-lg font-semibold hover:bg-accent-50 transition-colors"
+              className="bg-lp-green-700 text-white px-8 py-4 rounded-xl font-semibold hover:bg-lp-green-800 transition-colors shadow-lg"
             >
-              Get Support
+              Contact Support
             </motion.button>
           </Link>
         </div>

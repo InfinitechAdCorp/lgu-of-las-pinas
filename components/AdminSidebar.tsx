@@ -99,7 +99,7 @@ export default function AdminSidebar() {
             <Shield className="text-slate-800" size={20} />
           </div>
           <div>
-            <h1 className="font-bold text-base">Calapan City</h1>
+            <h1 className="font-bold text-base">Las Piñas City</h1>
             <p className="text-xs text-slate-200">Admin Panel</p>
           </div>
         </div>

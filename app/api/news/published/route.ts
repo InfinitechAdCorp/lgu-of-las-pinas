@@ -7,9 +7,9 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const queryString = searchParams.toString()
     
-    console.log("[News API] Fetching from:", `${API_URL}/api/news/published${queryString ? `?${queryString}` : ''}`)
+    console.log("[News API] Fetching from:", `${API_URL}/news/published${queryString ? `?${queryString}` : ''}`)
 
-    const response = await fetch(`${API_URL}/api/news/published${queryString ? `?${queryString}` : ''}`, {
+    const response = await fetch(`${API_URL}/news/published${queryString ? `?${queryString}` : ''}`, {
       method: "GET",
       headers: {
         Accept: "application/json",

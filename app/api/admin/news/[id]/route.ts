@@ -95,6 +95,77 @@ export async function POST(
 }
 
 /* ============================
+          PATCH UPDATE (FORM OR JSON)
+   ============================ */
+export async function PATCH(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+
+    const cookieStore = await cookies();
+    const authToken = cookieStore.get("auth_token");
+
+    if (!authToken) {
+      return NextResponse.json(
+        { success: false, message: "Authentication required - no auth token found" },
+        { status: 401 }
+      );
+    }
+
+    // Check content type to determine if it's FormData or JSON
+    const contentType = request.headers.get("content-type") || "";
+    
+    let response;
+    
+    if (contentType.includes("multipart/form-data")) {
+      // Handle FormData (with image)
+      const formData = await request.formData();
+      
+      // Laravel expects POST for FormData updates
+      response = await fetch(`${API_URL}/admin/news/${id}`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${authToken.value}`,
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: formData,
+        credentials: "include",
+      });
+    } else {
+      // Handle JSON (without image)
+      const body = await request.json();
+      
+      response = await fetch(`${API_URL}/admin/news/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${authToken.value}`,
+          "X-Requested-With": "XMLHttpRequest",
+        },
+        body: JSON.stringify(body),
+        credentials: "include",
+      });
+    }
+
+    const data = await response.json();
+    return NextResponse.json(data, { status: response.status });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        success: false,
+        message: "Internal server error",
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
+    );
+  }
+}
+
+/* ============================
               PUT
    ============================ */
 export async function PUT(

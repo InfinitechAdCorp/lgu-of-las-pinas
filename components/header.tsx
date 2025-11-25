@@ -17,7 +17,7 @@ const navLinks = [
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
-  userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
+  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>
 }
 
 declare global {
@@ -26,14 +26,11 @@ declare global {
   }
 }
 
-// Store prompt globally to persist across component remounts
 let globalDeferredPrompt: BeforeInstallPromptEvent | null = null
-let hasBeenDismissed = false
 
-// Capture the event ASAP when page loads
-if (typeof window !== 'undefined') {
-  window.addEventListener('beforeinstallprompt', (e: Event) => {
-    console.log("📲 Global beforeinstallprompt captured!")
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e: Event) => {
+    console.log("✅ beforeinstallprompt event captured globally")
     e.preventDefault()
     globalDeferredPrompt = e as BeforeInstallPromptEvent
   })
@@ -49,209 +46,227 @@ export default function Header() {
   const pathname = usePathname()
 
   useEffect(() => {
-    console.log("🔄 Header mounted, checking PWA status...")
-
-    // Check if user manually dismissed
-    if (hasBeenDismissed || localStorage.getItem('pwa-dismissed') === 'true') {
-      console.log("ℹ️ Install prompt was dismissed by user")
-      setShowInstallButton(false)
-      return
-    }
-
-    // Detect iOS
+    console.log("🔍 PWA Install Button Check Starting...")
+    
+    // Check iOS
     const checkIOS = () => {
       const ua = window.navigator.userAgent.toLowerCase()
       const isIOSDevice = /iphone|ipad|ipod/.test(ua)
+      console.log("📱 iOS Device detected:", isIOSDevice)
       setIsIOS(isIOSDevice)
-      console.log(`📱 iOS Device: ${isIOSDevice}`)
       return isIOSDevice
     }
 
     const iosDetected = checkIOS()
 
-    // Check if app is already installed
+    // Check if already installed
     const checkInstalled = () => {
-      // Check display mode (PWA)
-      const isStandaloneDisplay = window.matchMedia('(display-mode: standalone)').matches
-      
-      // Check iOS standalone
+      const isStandaloneDisplay = window.matchMedia("(display-mode: standalone)").matches
       const isIOSStandalone = window.navigator.standalone === true
-      
-      // Check referrer (Android)
-      const isAndroidApp = document.referrer.includes('android-app://')
-      
+      const isAndroidApp = document.referrer.includes("android-app://")
       const installed = isStandaloneDisplay || isIOSStandalone || isAndroidApp
 
+      console.log("🔧 Installation Check:", {
+        isStandaloneDisplay,
+        isIOSStandalone,
+        isAndroidApp,
+        installed
+      })
+
       if (installed) {
-        console.log("✅ App is already installed!")
+        console.log("✅ App is already installed")
         setIsInstalled(true)
         setShowInstallButton(false)
         return true
       }
-      
-      console.log("ℹ️ App not yet installed")
       return false
     }
 
     if (checkInstalled()) {
+      console.log("✅ Already installed, hiding button")
       return
     }
 
-    // For iOS devices, always show install option
+    // For iOS, always show install button (with manual instructions)
     if (iosDetected) {
-      console.log("📱 iOS: Showing install button")
+      console.log("📱 iOS detected - showing install button")
       setShowInstallButton(true)
       return
     }
 
-    // Check if we already have the prompt from global capture
+    // For Android/Desktop - ALWAYS show button (don't check for dismissed flag)
+    console.log("🤖 Non-iOS device - showing install button")
+    setShowInstallButton(true)
+    
+    // Check if prompt already captured
     if (globalDeferredPrompt) {
-      console.log("✅ Using globally captured install prompt")
+      console.log("✅ Global prompt already available")
       setDeferredPrompt(globalDeferredPrompt)
-      setShowInstallButton(true)
+    } else {
+      console.log("⏳ Button will show, waiting for beforeinstallprompt event for native prompt...")
     }
 
-    // Listen for beforeinstallprompt (Android/Chrome/Edge)
     const handleBeforeInstallPrompt = (e: Event) => {
-      console.log("📲 beforeinstallprompt event in component")
+      console.log("✅ beforeinstallprompt event fired in component")
       e.preventDefault()
       const promptEvent = e as BeforeInstallPromptEvent
       globalDeferredPrompt = promptEvent
       setDeferredPrompt(promptEvent)
-      setShowInstallButton(true)
     }
 
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-
-    // Listen for successful installation
     const handleAppInstalled = () => {
-      console.log("🎉 App successfully installed!")
+      console.log("✅ App has been installed!")
       setIsInstalled(true)
       setShowInstallButton(false)
       setDeferredPrompt(null)
       globalDeferredPrompt = null
-      localStorage.removeItem('pwa-dismissed')
     }
 
-    window.addEventListener('appinstalled', handleAppInstalled)
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
+    window.addEventListener("appinstalled", handleAppInstalled)
 
-    // Debug: Log current state after 2 seconds
-    setTimeout(() => {
-      console.log("📊 PWA Debug Info:", {
-        hasPrompt: !!deferredPrompt || !!globalDeferredPrompt,
-        isStandalone: window.matchMedia('(display-mode: standalone)').matches,
-        isIOS: iosDetected,
-        showButton: showInstallButton,
-        userAgent: navigator.userAgent
-      })
-    }, 2000)
+    // Debug information
+    console.log("🔧 PWA Requirements Check:", {
+      hasServiceWorker: "serviceWorker" in navigator,
+      isSecure: window.isSecureContext,
+      protocol: window.location.protocol,
+      hasManifest: document.querySelector('link[rel="manifest"]') !== null,
+      manifestLink: document.querySelector('link[rel="manifest"]')?.getAttribute('href'),
+      displayMode: window.matchMedia("(display-mode: standalone)").matches ? "standalone" : "browser",
+      userAgent: navigator.userAgent,
+    })
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-      window.removeEventListener('appinstalled', handleAppInstalled)
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
+      window.removeEventListener("appinstalled", handleAppInstalled)
     }
   }, [])
 
   const handleInstallClick = async () => {
-    // iOS: Show instructions
+    console.log("🔘 Install button clicked")
+    
     if (isIOS) {
+      console.log("📱 iOS - showing instructions")
       setShowIOSInstructions(true)
       return
     }
 
-    // Android/Desktop: Use native prompt
-    if (!deferredPrompt && !globalDeferredPrompt) {
-      console.warn("⚠️ No install prompt available")
-      alert("Install prompt not available. Please try:\n• Using Chrome or Edge browser\n• Ensuring site is served over HTTPS\n• Refreshing the page")
+    const prompt = deferredPrompt || globalDeferredPrompt
+    
+    if (!prompt) {
+      console.error("❌ No install prompt available - showing alert")
+      alert(
+        "⚠️ Install Prompt Not Available\n\n" +
+        "The browser hasn't triggered the install prompt yet. This can happen if:\n\n" +
+        "• The app doesn't meet PWA requirements yet\n" +
+        "• You're not using Chrome, Edge, or Samsung Internet\n" +
+        "• The site isn't served over HTTPS\n\n" +
+        "The Install button will remain visible. Please:\n" +
+        "• Try refreshing the page\n" +
+        "• Check browser console for errors\n" +
+        "• Ensure you're using a supported browser"
+      )
       return
     }
 
-    const prompt = deferredPrompt || globalDeferredPrompt
-
     try {
       console.log("🚀 Showing install prompt...")
-      await prompt!.prompt()
+      await prompt.prompt()
+      const { outcome } = await prompt.userChoice
+      console.log("📊 User choice:", outcome)
 
-      const { outcome } = await prompt!.userChoice
-      console.log(`👤 User response: ${outcome}`)
-
-      if (outcome === 'accepted') {
-        console.log('✅ User accepted installation')
-        setShowInstallButton(false)
+      if (outcome === "accepted") {
+        console.log("✅ User accepted installation")
+        // Keep button visible until app is actually installed
       } else {
-        console.log('❌ User dismissed installation')
-        hasBeenDismissed = true
-        localStorage.setItem('pwa-dismissed', 'true')
-        setShowInstallButton(false)
+        console.log("❌ User dismissed installation")
+        // Keep button visible even if dismissed
       }
 
+      // Clear the used prompt
       setDeferredPrompt(null)
       globalDeferredPrompt = null
     } catch (error) {
-      console.error('❌ Install error:', error)
-      alert('Installation failed. Please try again later.')
+      console.error("❌ Installation error:", error)
+      alert("Installation failed. The Install button will remain available for you to try again.")
     }
   }
 
   const dismissIOSInstructions = () => {
     setShowIOSInstructions(false)
-    hasBeenDismissed = true
-    localStorage.setItem('pwa-dismissed', 'true')
-    setShowInstallButton(false)
   }
+
+  const dismissPermanently = () => {
+    setShowIOSInstructions(false)
+    // Don't hide the install button, just close the modal
+  }
+
+  // Debug button visibility
+  useEffect(() => {
+    console.log("🎯 Install Button State:", {
+      showInstallButton,
+      isInstalled,
+      isIOS,
+      hasDeferredPrompt: !!deferredPrompt,
+      hasGlobalPrompt: !!globalDeferredPrompt
+    })
+  }, [showInstallButton, isInstalled, isIOS, deferredPrompt])
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-orange-200">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between relative">
-          
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-lp-green-200 shadow-sm">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between relative">
           <Link href="/" className="flex items-center gap-3">
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               className="flex items-center gap-3 cursor-pointer"
             >
-              <div className="w-10 h-10 flex items-center justify-center">
-                <img
-                  src="/logo.png"
-                  alt="Calapan Logo"
-                  className="w-full h-full object-contain"
-                />
+              <div className="w-12 h-12 flex items-center justify-center">
+                <img src="/image.png" alt="City of Las Piñas Seal" className="w-full h-full object-contain" />
               </div>
 
               <div className="flex flex-col">
-                <span className="text-lg font-bold gradient-text">Calapan</span>
-                <span className="text-xs text-orange-600 font-semibold">
-                  Government System
-                </span>
+                <span className="text-lg font-bold text-lp-green-800">City of Las Piñas</span>
+                <span className="text-xs text-lp-gold-600 font-medium">Philippines</span>
               </div>
             </motion.div>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4">
-            {navLinks.map((link, i) => (
-              <motion.div
-                key={link.href}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-              >
-                <Link
-                  href={link.href}
-                  className={`text-sm font-semibold transition-all relative group ${
-                    pathname === link.href ? "text-orange-600" : "text-gray-700 hover:text-orange-600"
-                  }`}
+          <div className="hidden lg:flex items-center gap-1">
+            {navLinks.map((link, i) => {
+              const isActive = pathname === link.href
+              return (
+                <motion.div
+                  key={link.href}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05 }}
                 >
-                  {link.label}
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-orange-600 to-emerald-500 group-hover:w-full transition-all duration-300" />
-                </Link>
-              </motion.div>
-            ))}
+                  <Link
+                    href={link.href}
+                    className={`relative px-4 py-2 text-sm font-semibold rounded-full transition-all ${
+                      isActive
+                        ? "bg-lp-green-100 text-lp-green-800"
+                        : "text-lp-green-700 hover:bg-lp-green-50 hover:text-lp-green-800"
+                    }`}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <motion.span
+                        layoutId="activeTab"
+                        className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-lp-gold-500 rounded-full"
+                      />
+                    )}
+                  </Link>
+                </motion.div>
+              )
+            })}
           </div>
 
-          <motion.div 
-            className="hidden md:flex items-center gap-3" 
-            initial={{ opacity: 0, x: 20 }} 
+          <motion.div
+            className="hidden lg:flex items-center gap-3"
+            initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
           >
             <AnimatePresence mode="wait">
@@ -263,10 +278,10 @@ export default function Header() {
                   exit={{ scale: 0.8, opacity: 0 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
                   onClick={handleInstallClick}
-                  className="px-4 py-2.5 rounded-full bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-semibold hover:shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
+                  className="px-4 py-2.5 rounded-full bg-gradient-to-r from-lp-gold-500 to-lp-gold-400 text-lp-green-900 font-semibold hover:shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
                 >
                   <Download size={18} />
-                  <span>{isIOS ? 'Install' : 'Install App'}</span>
+                  <span>{isIOS ? "Install App" : "Install App"}</span>
                 </motion.button>
               )}
 
@@ -276,7 +291,7 @@ export default function Header() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="px-4 py-2.5 rounded-full bg-emerald-50 text-emerald-700 font-semibold flex items-center gap-2 border border-emerald-200"
+                  className="px-4 py-2.5 rounded-full bg-lp-green-50 text-lp-green-700 font-semibold flex items-center gap-2 border border-lp-green-200"
                 >
                   <Check size={18} />
                   <span>Installed</span>
@@ -286,7 +301,7 @@ export default function Header() {
 
             <Link
               href="/login"
-              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 text-white font-semibold hover:shadow-xl transition-all hover:scale-105 active:scale-95"
+              className="px-6 py-2.5 rounded-full bg-gradient-to-r from-lp-green-700 to-lp-green-600 text-white font-semibold hover:shadow-xl transition-all hover:scale-105 active:scale-95"
             >
               Login
             </Link>
@@ -294,7 +309,7 @@ export default function Header() {
 
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-orange-50 transition-colors"
+            className="lg:hidden p-2 rounded-lg hover:bg-lp-green-50 transition-colors text-lp-green-700"
             aria-label="Toggle menu"
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -306,20 +321,25 @@ export default function Header() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="md:hidden bg-white border-t border-orange-100 px-4 py-4 space-y-3 overflow-hidden absolute top-full left-0 w-full z-40 shadow-md"
+                className="lg:hidden bg-white border-t border-lp-green-100 px-4 py-4 space-y-2 overflow-hidden absolute top-full left-0 w-full z-40 shadow-lg"
               >
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={`block text-sm font-medium py-2 transition-colors ${
-                      pathname === link.href ? "text-orange-600 font-semibold" : "text-gray-700 hover:text-orange-600"
-                    }`}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {navLinks.map((link) => {
+                  const isActive = pathname === link.href
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`block text-sm font-medium py-3 px-4 rounded-lg transition-colors ${
+                        isActive
+                          ? "bg-lp-green-100 text-lp-green-800 font-semibold border-l-4 border-lp-gold-500"
+                          : "text-lp-green-700 hover:bg-lp-green-50"
+                      }`}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {link.label}
+                    </Link>
+                  )
+                })}
 
                 {showInstallButton && !isInstalled && (
                   <motion.button
@@ -329,7 +349,7 @@ export default function Header() {
                       handleInstallClick()
                       setIsOpen(false)
                     }}
-                    className="block w-full px-4 py-3 rounded-lg bg-gradient-to-r from-emerald-600 to-emerald-500 text-white font-medium text-center flex items-center justify-center gap-2 hover:shadow-lg transition-all active:scale-95"
+                    className="w-full px-4 py-3 rounded-lg bg-gradient-to-r from-lp-gold-500 to-lp-gold-400 text-lp-green-900 font-medium text-center flex items-center justify-center gap-2 hover:shadow-lg transition-all active:scale-95"
                   >
                     <Download size={18} />
                     <span>Install App</span>
@@ -337,7 +357,7 @@ export default function Header() {
                 )}
 
                 {isInstalled && (
-                  <div className="block w-full px-4 py-3 rounded-lg bg-emerald-50 text-emerald-700 font-medium text-center flex items-center justify-center gap-2 border border-emerald-200">
+                  <div className="w-full px-4 py-3 rounded-lg bg-lp-green-50 text-lp-green-700 font-medium text-center flex items-center justify-center gap-2 border border-lp-green-200">
                     <Check size={18} />
                     <span>App Installed</span>
                   </div>
@@ -345,7 +365,7 @@ export default function Header() {
 
                 <Link
                   href="/login"
-                  className="block w-full px-4 py-3 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 text-white font-medium text-center hover:shadow-lg transition-all active:scale-95"
+                  className="block w-full px-4 py-3 rounded-lg bg-gradient-to-r from-lp-green-700 to-lp-green-600 text-white font-medium text-center hover:shadow-lg transition-all active:scale-95"
                   onClick={() => setIsOpen(false)}
                 >
                   Login
@@ -376,51 +396,51 @@ export default function Header() {
             >
               <button
                 onClick={dismissIOSInstructions}
-                className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="absolute top-4 right-4 p-2 hover:bg-lp-green-50 rounded-full transition-colors"
               >
                 <X size={20} />
               </button>
 
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-3 bg-orange-100 rounded-full">
-                  <Smartphone className="text-orange-600" size={24} />
+                <div className="p-3 bg-lp-green-100 rounded-full">
+                  <Smartphone className="text-lp-green-700" size={24} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900">Install App</h3>
-                  <p className="text-sm text-gray-500">Add to Home Screen</p>
+                  <h3 className="text-xl font-bold text-lp-green-900">Install App</h3>
+                  <p className="text-sm text-lp-green-600">Add to Home Screen</p>
                 </div>
               </div>
 
               <div className="space-y-4 mt-6">
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold">
+                  <div className="flex-shrink-0 w-8 h-8 bg-lp-gold-100 rounded-full flex items-center justify-center text-lp-gold-700 font-bold">
                     1
                   </div>
                   <div className="flex-1">
-                    <p className="text-gray-700">
-                      Tap the <strong>Share</strong> button <span className="text-2xl">⬆️</span> at the bottom of your browser
+                    <p className="text-lp-green-800">
+                      Tap the <strong>Share</strong> button <span className="text-2xl">⬆️</span> at the bottom of Safari
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold">
+                  <div className="flex-shrink-0 w-8 h-8 bg-lp-gold-100 rounded-full flex items-center justify-center text-lp-gold-700 font-bold">
                     2
                   </div>
                   <div className="flex-1">
-                    <p className="text-gray-700">
-                      Scroll down and tap <strong>"Add to Home Screen"</strong> <span className="text-2xl">➕</span>
+                    <p className="text-lp-green-800">
+                      Scroll down and tap <strong>"Add to Home Screen"</strong> <span className="text-xl">➕</span>
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <div className="flex-shrink-0 w-8 h-8 bg-orange-100 rounded-full flex items-center justify-center text-orange-600 font-bold">
+                  <div className="flex-shrink-0 w-8 h-8 bg-lp-gold-100 rounded-full flex items-center justify-center text-lp-gold-700 font-bold">
                     3
                   </div>
                   <div className="flex-1">
-                    <p className="text-gray-700">
-                      Tap <strong>"Add"</strong> to confirm installation
+                    <p className="text-lp-green-800">
+                      Tap <strong>"Add"</strong> in the top right to confirm
                     </p>
                   </div>
                 </div>
@@ -428,18 +448,14 @@ export default function Header() {
 
               <button
                 onClick={dismissIOSInstructions}
-                className="w-full mt-6 px-4 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white font-semibold rounded-lg hover:shadow-lg transition-all active:scale-95"
+                className="w-full mt-6 px-4 py-3 bg-gradient-to-r from-lp-green-700 to-lp-green-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all active:scale-95"
               >
                 Got it!
               </button>
 
               <button
-                onClick={() => {
-                  dismissIOSInstructions()
-                  hasBeenDismissed = true
-                  localStorage.setItem('pwa-dismissed', 'true')
-                }}
-                className="w-full mt-2 px-4 py-2 text-gray-500 text-sm hover:text-gray-700 transition-colors"
+                onClick={dismissPermanently}
+                className="w-full mt-2 px-4 py-2 text-lp-green-600 text-sm hover:text-lp-green-800 transition-colors"
               >
                 Don't show again
               </button>

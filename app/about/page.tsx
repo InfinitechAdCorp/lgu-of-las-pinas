@@ -6,9 +6,9 @@ import AboutSection from "@/components/about-section"
 export default function AboutPage() {
   return (
     <PageLayout
-      title="About Calapan City"
+      title="About Las Piñas City"
       subtitle="Explore our city's story and the mission behind what we do"
-      image="/calapan-city-landscape-history-culture.jpg"
+      image="/Las_Piñas_City_hall.png"
     >
       <AboutSection />
     </PageLayout>

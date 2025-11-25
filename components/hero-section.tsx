@@ -17,18 +17,6 @@ export default function HeroSection() {
       {/* Background with multiple layers */}
       <div className="absolute inset-0 bg-gradient-to-br from-lp-green-900 via-lp-green-800 to-lp-green-900" />
 
-      {/* Decorative pattern overlay */}
-      <div className="absolute inset-0 opacity-10">
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="heroGrid" width="60" height="60" patternUnits="userSpaceOnUse">
-              <path d="M 60 0 L 0 0 0 60" fill="none" stroke="white" strokeWidth="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#heroGrid)" />
-        </svg>
-      </div>
-
       {/* Bamboo Organ inspired decorative elements */}
       <div className="absolute left-0 top-1/2 -translate-y-1/2 opacity-20 hidden lg:flex flex-col items-center gap-1">
         {[...Array(12)].map((_, i) => (
@@ -71,7 +59,7 @@ export default function HeroSection() {
       {/* City seal watermark */}
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 0.08, scale: 1 }}
+        animate={{ opacity: 0.25, scale: 1 }}
         transition={{ duration: 1, delay: 0.5 }}
         className="absolute right-10 top-1/2 -translate-y-1/2 hidden xl:block"
       >
